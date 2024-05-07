@@ -12,6 +12,13 @@ function App() {
   const [postID, setPostID] = useState(1)
   const [user_in, setUser_in] = useState('')
   const [pass_in, setPass_in] = useState('')
+  const [login, setLogin] = useState(false)
+  const [toPost, setToPost] = useState({
+    title: '',
+    content: ''
+  })
+  const [create, setCreate] = useState(false)
+  const [update, setUpdate] = useState(false)
 
   console.log(postID)
 
@@ -28,6 +35,42 @@ function App() {
       setLoading(false)
   }
 
+  async function delBlog() {
+    fetch(backendURL + postID, {
+        method: 'DELETE',
+        cache: 'default',
+        mode: 'cors'
+    })
+
+    getBlogs()
+  }
+
+  async function postBlog() {
+    fetch(backendURL, {
+        method: 'POST',
+        cache: 'default',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(toPost)
+    })
+
+    setCreate(false)
+  }
+
+  async function updateBlog() {
+    fetch(backendURL + postID, {
+        method: 'PUT',
+        cache: 'default', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(toPost)
+    })
+
+    setUpdate(false)
+  }
+
   const increase = () => {
       setPostID(postID + 1)
   }
@@ -39,7 +82,11 @@ function App() {
   }
 
   const submitLogin = () => {
-    set
+    if (user_in === user && pass_in === pass) {
+        setLogin(true)
+    } else {
+        setLogin(false)
+    }
   }
 
   useEffect(() => {
@@ -68,12 +115,66 @@ function App() {
 
   if(window.location.pathname === '/admin') {
 
-    if(user_in === user && pass_in === pass) {
+    //Admin: luego de que la autenticación funciona
+    if(login) {
+
+        if(create) {
+            return (
+                <div className="bg">
+                    <header className="blogHeader">
+                        <h1 className="blogTitle">Panel de Admin</h1>    
+                        <a href="/">logout</a>
+                    </header>
+        
+                    <div className="blogCard">
+
+                        <form onSubmit={postBlog}>
+                            <div className="field1">
+                                <h3>Titulo: <input name="title" value={toPost.title} onChange={(e) => setToPost({...toPost, [e.target.name]: e.target.value})}></input></h3>
+                            </div>
+                            <div className="field3">
+                                <h3>Contenido: <textArea name="content" value={toPost.content} onChange={(e) => setToPost({...toPost, [e.target.name]: e.target.value})}></textArea></h3>
+                            </div>
+                            <button className="submitButton" type='submit'>Submit</button>
+                            <button className="cancelButton" onClick={() => setUpdate(false)}>Cancel</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            )
+        }
+
+        if(update) {
+            return (
+                <div className="bg">
+                    <header className="blogHeader">
+                        <h1 className="blogTitle">Panel de Admin</h1>    
+                        <a href="/">logout</a>
+                    </header>
+        
+                    <div className="blogCard">
+
+                        <form onSubmit={updateBlog}>
+                            <div className="field1">
+                                <h3>Titulo: <input name="title" value={toPost.title} onChange={(e) => setToPost({...toPost, [e.target.name]: e.target.value})}></input></h3>
+                            </div>
+                            <div className="field3">
+                                <h3>Contenido: <textArea name="content" value={toPost.content} onChange={(e) => setToPost({...toPost, [e.target.name]: e.target.value})}></textArea></h3>
+                            </div>
+                            <button className="submitButton" type='submit'>Submit</button>
+                            <button className="cancelButton" onClick={() => setUpdate(false)}>Cancel</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            )
+        }
+
         return (
             <div className="bg">
                 <header className="blogHeader">
                     <h1 className="blogTitle">La música de Spinneta</h1>    
-                    <a href="/admin">logout</a>
+                    <a href="/">logout</a>
                 </header>
       
                 <div className="blogCard">
@@ -88,6 +189,9 @@ function App() {
                     <button className="nextButton" onClick={increase}>Siguiente &gt;</button>
                     <h1 className="idIndicator">{postID}</h1>
                     <button className="prevButton" onClick={decrease}>&lt; Anterior </button>
+                    <button className="delButton" onClick={delBlog}>Eliminar</button>
+                    <button className="updateButton" onClick={() => setUpdate(true)}>Actualizar</button>
+                    <button className="createButton" onClick={() => setCreate(true)}>Crear</button>
                 </div>
             </div>
         )
