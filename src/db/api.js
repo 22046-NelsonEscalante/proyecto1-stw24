@@ -19,7 +19,7 @@ app.get('/blogs', (req, res)=>{
             res.send(result.rows);
         }
     })
-    client.end;
+    //client.end;
 });
 
 app.get('/blogs/:id', (req, res)=>{
@@ -28,21 +28,22 @@ app.get('/blogs/:id', (req, res)=>{
             res.send(result.rows);
         }
     })
-    client.end;
+    //client.end;
 });
 
 app.post('/blogs', (req, res)=>{
     const blog = req.body;
-    let insertQuery = `insert into blogs(title, content) values ('${blog.title}', '${blog.content}')`
+    let insertQuery = `insert into blogs(title, content) values ($1, $2)`
+    const values = [blog.title, blog.content]
 
-    client.query(insertQuery, (err, result)=>{
+    client.query(insertQuery, values, (err, result)=>{
         if(!err) {
             res.send('Successful insert')
         } else {
             console.log(err.message)
         }
     })
-    client.end;
+    //client.end;
 })
 
 app.put('/blogs/:id', (req, res)=> {
@@ -55,7 +56,7 @@ app.put('/blogs/:id', (req, res)=> {
         }
         else{ console.log(err.message) }
     })
-    client.end;
+    //client.end;
 })
 
 app.delete('/blogs/:id', (req, res)=> {
@@ -67,5 +68,5 @@ app.delete('/blogs/:id', (req, res)=> {
         }
         else{ console.log(err.message) }
     })
-    client.end;
+    //client.end;
 })
