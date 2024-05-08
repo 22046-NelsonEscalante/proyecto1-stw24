@@ -33,10 +33,9 @@ app.get('/blogs/:id', (req, res)=>{
 
 app.post('/blogs', (req, res)=>{
     const blog = req.body;
-    let insertQuery = `insert into blogs(title, content) values ($1, $2)`
-    const values = [blog.title, blog.content]
+    let insertQuery = `insert into blogs(title, content) values ('${blog.title}', '${blog.content}')`
 
-    client.query(insertQuery, values, (err, result)=>{
+    client.query(insertQuery, (err, result)=>{
         if(!err) {
             res.send('Successful insert')
         } else {
