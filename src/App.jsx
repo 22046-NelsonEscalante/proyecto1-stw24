@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const backendURL = 'http://127.0.0.1:3300/blogs/'
+const backendURL = 'https://api-proyecto1-stw24.onrender.com/blogs'
 
 const user = 'nel'
 const pass = 'hola'
